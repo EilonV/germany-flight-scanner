@@ -1,0 +1,841 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TLV to Nuremberg</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#fff; --ink:#15181d; --muted:#666e7a; --line:#e3e6ea;
+    --accent:#1a6cff; --good:#0a7d4a; --good-bg:#e6f6ee; --warn:#8a6100; --off:#c3c8cf;
+  }
+  @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
+    --bg:#101317; --card:#181c22; --ink:#e8eaed; --muted:#9aa3ad; --line:#2a2f37;
+    --accent:#63a0ff; --good:#4ade9a; --good-bg:#12291f; --warn:#e0b44a; --off:#4a515b;
+  }}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);padding-block:28px;padding-left:16px;padding-right:16px;
+       font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .wrap{max-width:1080px;margin:0 auto}
+  h1{font-size:22px;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:13px;margin-bottom:18px}
+  .bar{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;flex:1;min-width:140px}
+  .stat b{display:block;font-size:20px}
+  .stat span{color:var(--muted);font-size:12px}
+  .tablewrap{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:12px}
+  table{border-collapse:collapse;width:100%;min-width:760px;font-size:14px}
+  th,td{padding:11px 12px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+  th{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.03em;
+     cursor:pointer;user-select:none;position:sticky;top:0;background:var(--card)}
+  th[data-sort]:after{content:" \2195";opacity:.35}
+  tbody tr:last-child td{border-bottom:0}
+  tbody tr:hover{background:color-mix(in srgb,var(--accent) 6%,transparent)}
+  .price{font-weight:700;font-size:15px}
+  tr.cheap{background:var(--good-bg)}
+  tr.cheap .price{color:var(--good)}
+  .pill{display:inline-block;font-size:11px;padding:2px 7px;border-radius:99px;
+        border:1px solid var(--line);color:var(--muted);margin-left:6px}
+  .pill.bus{color:var(--warn);border-color:currentColor}
+  .bags{display:flex;gap:7px;align-items:center}
+  .bag{position:relative;display:inline-flex;cursor:help;line-height:0}
+  .bag svg{width:21px;height:21px;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .bag.yes svg{stroke:var(--good)}
+  .bag.no svg{stroke:var(--off)}
+  .bag.no:after{content:"";position:absolute;left:1px;right:1px;top:50%;height:1.6px;
+                background:var(--off);transform:rotate(-38deg)}
+  .tip{position:absolute;bottom:130%;left:50%;transform:translateX(-50%);width:238px;
+       background:var(--ink);color:var(--card);padding:9px 11px;border-radius:8px;font-size:12px;
+       line-height:1.45;white-space:normal;opacity:0;pointer-events:none;transition:opacity .12s;z-index:9}
+  .bag:hover .tip,.bag:focus-visible .tip{opacity:1}
+  .tip b{display:block;margin-bottom:3px}
+  .note{color:var(--muted);font-size:12.5px;margin-top:16px}
+  .note code{background:var(--card);border:1px solid var(--line);padding:1px 5px;border-radius:4px}
+  .empty{padding:28px;text-align:center;color:var(--muted)}
+  .spark{display:block;margin-top:6px}
+  a{color:var(--accent)}
+  @media(max-width:560px){ h1{font-size:19px} .stat b{font-size:17px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>TLV &rarr; NUE &middot; June 2027</h1>
+  <div class="sub">
+    Round trip, 1 adult, economy &middot; outbound 2027-06-01 or 2027-06-02,
+    return 2027-06-07 or 2027-06-08<br>
+    Max 1 stop &middot; layover &le; 300 min &middot;
+    any time of day &middot; flights only &middot;
+    no connections in EG, IQ, IR, JO, LB, LY, SA, SD, SY, TR, YE
+  </div>
+
+  <div class="bar">
+    <div class="stat"><b>1,698 &#8362;</b>
+      <span>cheapest now</span></div>
+    <div class="stat"><b>1,698 &#8362;</b>
+      <span>lowest ever seen</span>
+      <svg class="spark" width="100%" height="24" viewBox="0 0 100 24"
+        preserveAspectRatio="none"><polyline points="0.0,1.5 50.0,1.7 100.0,22.5" fill="none"
+        stroke="var(--accent)" stroke-width="1.6"/></svg></div>
+    <div class="stat"><b>21</b><span>options matching your rules</span></div>
+    <div class="stat"><b>800 &#8362;</b><span>alert threshold</span></div>
+  </div>
+
+  <div class="tablewrap">
+  
+  <table id="t">
+    <thead><tr>
+      <th data-sort="num">Price</th>
+      <th>Airline</th>
+      <th>Route</th>
+      <th>Dates</th>
+      <th>Depart</th>
+      <th>Arrive</th>
+      <th data-sort="num">Layover</th>
+      <th data-sort="num">Duration</th>
+      <th>Baggage</th>
+      <th></th>
+    </tr></thead>
+    <tbody>
+    
+      <tr class="">
+        <td class="price" data-v="1698">1,698 &#8362;</td>
+        <td>Lufthansa</td>
+        <td>TLV&rarr;FRA&rarr;NUE
+          </td>
+        <td>06-01 &rarr; 06-07</td>
+        <td>4:30 PM</td>
+        <td>11:00 PM</td>
+        <td data-v="125">2 hr 5 min FRA</td>
+        <td data-v="450">7 hr 30 min</td>
+        <td><div class="bags">
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/><path d="M9 14h6"/></svg>
+            <span class="tip"><b>Backpack / personal item</b>Personal item / small backpack is included in every economy fare on this route.
+               <i>(policy, not live-quoted)</i></span>
+          </span>
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="13" rx="2"/><path d="M9 8V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><path d="M12 3v1"/><path d="M9 21v1"/><path d="M15 21v1"/></svg>
+            <span class="tip"><b>Cabin trolley</b>Included. Cheapest fare with this bag: 1,698 NIS - same as the headline fare.
+              </span>
+          </span>
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3"/><path d="M3 12h18"/></svg>
+            <span class="tip"><b>Checked bag</b>Included. Cheapest fare with this bag: 1,698 NIS - same as the headline fare.
+              </span>
+          </span>
+          
+        </div></td>
+        <td><a href="https://www.google.com/travel/flights/search?tfs=GiASCjIwMjctMDYtMDEoAWoFEgNUTFZyBRIDTlVFkAGsAhogEgoyMDI3LTA2LTA3KAFqBRIDTlVFcgUSA1RMVpABrAJCAQFIAZgBAQ==&hl=en-US&curr=ILS" target="_blank" rel="noopener">Book</a></td>
+      </tr>
+    
+      <tr class="">
+        <td class="price" data-v="1698">1,698 &#8362;</td>
+        <td>Lufthansa</td>
+        <td>TLV&rarr;FRA&rarr;NUE
+          </td>
+        <td>06-01 &rarr; 06-08</td>
+        <td>4:30 PM</td>
+        <td>11:00 PM</td>
+        <td data-v="125">2 hr 5 min FRA</td>
+        <td data-v="450">7 hr 30 min</td>
+        <td><div class="bags">
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/><path d="M9 14h6"/></svg>
+            <span class="tip"><b>Backpack / personal item</b>Personal item / small backpack is included in every economy fare on this route.
+               <i>(policy, not live-quoted)</i></span>
+          </span>
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="13" rx="2"/><path d="M9 8V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><path d="M12 3v1"/><path d="M9 21v1"/><path d="M15 21v1"/></svg>
+            <span class="tip"><b>Cabin trolley</b>Included. Cheapest fare with this bag: 1,698 NIS - same as the headline fare.
+              </span>
+          </span>
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3"/><path d="M3 12h18"/></svg>
+            <span class="tip"><b>Checked bag</b>Included. Cheapest fare with this bag: 1,698 NIS - same as the headline fare.
+              </span>
+          </span>
+          
+        </div></td>
+        <td><a href="https://www.google.com/travel/flights/search?tfs=GiASCjIwMjctMDYtMDEoAWoFEgNUTFZyBRIDTlVFkAGsAhogEgoyMDI3LTA2LTA4KAFqBRIDTlVFcgUSA1RMVpABrAJCAQFIAZgBAQ==&hl=en-US&curr=ILS" target="_blank" rel="noopener">Book</a></td>
+      </tr>
+    
+      <tr class="">
+        <td class="price" data-v="1698">1,698 &#8362;</td>
+        <td>Lufthansa</td>
+        <td>TLV&rarr;FRA&rarr;NUE
+          </td>
+        <td>06-02 &rarr; 06-08</td>
+        <td>4:30 PM</td>
+        <td>11:00 PM</td>
+        <td data-v="125">2 hr 5 min FRA</td>
+        <td data-v="450">7 hr 30 min</td>
+        <td><div class="bags">
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/><path d="M9 14h6"/></svg>
+            <span class="tip"><b>Backpack / personal item</b>Personal item / small backpack is included in every economy fare on this route.
+               <i>(policy, not live-quoted)</i></span>
+          </span>
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="13" rx="2"/><path d="M9 8V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><path d="M12 3v1"/><path d="M9 21v1"/><path d="M15 21v1"/></svg>
+            <span class="tip"><b>Cabin trolley</b>Included. Cheapest fare with this bag: 1,698 NIS - same as the headline fare.
+              </span>
+          </span>
+          
+          <span class="bag no" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3"/><path d="M3 12h18"/></svg>
+            <span class="tip"><b>Checked bag</b>Not in the headline fare. Cheapest fare including it: 1,713 NIS (+15 NIS).
+              </span>
+          </span>
+          
+        </div></td>
+        <td><a href="https://www.google.com/travel/flights/search?tfs=GiASCjIwMjctMDYtMDIoAWoFEgNUTFZyBRIDTlVFkAGsAhogEgoyMDI3LTA2LTA4KAFqBRIDTlVFcgUSA1RMVpABrAJCAQFIAZgBAQ==&hl=en-US&curr=ILS" target="_blank" rel="noopener">Book</a></td>
+      </tr>
+    
+      <tr class="">
+        <td class="price" data-v="1714">1,714 &#8362;</td>
+        <td>Lufthansa</td>
+        <td>TLV&rarr;FRA&rarr;NUE
+          </td>
+        <td>06-02 &rarr; 06-07</td>
+        <td>4:30 PM</td>
+        <td>11:00 PM</td>
+        <td data-v="125">2 hr 5 min FRA</td>
+        <td data-v="450">7 hr 30 min</td>
+        <td><div class="bags">
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/><path d="M9 14h6"/></svg>
+            <span class="tip"><b>Backpack / personal item</b>Personal item / small backpack is included in every economy fare on this route.
+               <i>(policy, not live-quoted)</i></span>
+          </span>
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="13" rx="2"/><path d="M9 8V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><path d="M12 3v1"/><path d="M9 21v1"/><path d="M15 21v1"/></svg>
+            <span class="tip"><b>Cabin trolley</b>Included. Cheapest fare with this bag: 1,698 NIS (16 NIS less than the headline fare).
+              </span>
+          </span>
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3"/><path d="M3 12h18"/></svg>
+            <span class="tip"><b>Checked bag</b>Included. Cheapest fare with this bag: 1,714 NIS - same as the headline fare.
+              </span>
+          </span>
+          
+        </div></td>
+        <td><a href="https://www.google.com/travel/flights/search?tfs=GiASCjIwMjctMDYtMDIoAWoFEgNUTFZyBRIDTlVFkAGsAhogEgoyMDI3LTA2LTA3KAFqBRIDTlVFcgUSA1RMVpABrAJCAQFIAZgBAQ==&hl=en-US&curr=ILS" target="_blank" rel="noopener">Book</a></td>
+      </tr>
+    
+      <tr class="">
+        <td class="price" data-v="2150">2,150 &#8362;</td>
+        <td>Lufthansa</td>
+        <td>TLV&rarr;FRA&rarr;NUE
+          </td>
+        <td>06-02 &rarr; 06-07</td>
+        <td>4:45 AM</td>
+        <td>10:45 AM</td>
+        <td data-v="95">1 hr 35 min FRA</td>
+        <td data-v="420">7 hr</td>
+        <td><div class="bags">
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/><path d="M9 14h6"/></svg>
+            <span class="tip"><b>Backpack / personal item</b>Personal item / small backpack is included in every economy fare on this route.
+               <i>(policy, not live-quoted)</i></span>
+          </span>
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="13" rx="2"/><path d="M9 8V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><path d="M12 3v1"/><path d="M9 21v1"/><path d="M15 21v1"/></svg>
+            <span class="tip"><b>Cabin trolley</b>Included. Cheapest fare with this bag: 2,150 NIS - same as the headline fare.
+              </span>
+          </span>
+          
+          <span class="bag no" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3"/><path d="M3 12h18"/></svg>
+            <span class="tip"><b>Checked bag</b>Not in the headline fare. Cheapest fare including it: 2,160 NIS (+10 NIS).
+              </span>
+          </span>
+          
+        </div></td>
+        <td><a href="https://www.google.com/travel/flights/search?tfs=GiASCjIwMjctMDYtMDIoAWoFEgNUTFZyBRIDTlVFkAGsAhogEgoyMDI3LTA2LTA3KAFqBRIDTlVFcgUSA1RMVpABrAJCAQFIAZgBAQ==&hl=en-US&curr=ILS" target="_blank" rel="noopener">Book</a></td>
+      </tr>
+    
+      <tr class="">
+        <td class="price" data-v="2150">2,150 &#8362;</td>
+        <td>Lufthansa</td>
+        <td>TLV&rarr;FRA&rarr;NUE
+          </td>
+        <td>06-02 &rarr; 06-08</td>
+        <td>4:45 AM</td>
+        <td>10:45 AM</td>
+        <td data-v="95">1 hr 35 min FRA</td>
+        <td data-v="420">7 hr</td>
+        <td><div class="bags">
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/><path d="M9 14h6"/></svg>
+            <span class="tip"><b>Backpack / personal item</b>Personal item / small backpack is included in every economy fare on this route.
+               <i>(policy, not live-quoted)</i></span>
+          </span>
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="13" rx="2"/><path d="M9 8V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><path d="M12 3v1"/><path d="M9 21v1"/><path d="M15 21v1"/></svg>
+            <span class="tip"><b>Cabin trolley</b>Included. Cheapest fare with this bag: 2,150 NIS - same as the headline fare.
+              </span>
+          </span>
+          
+          <span class="bag no" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3"/><path d="M3 12h18"/></svg>
+            <span class="tip"><b>Checked bag</b>Not in the headline fare. Cheapest fare including it: 2,158 NIS (+8 NIS).
+              </span>
+          </span>
+          
+        </div></td>
+        <td><a href="https://www.google.com/travel/flights/search?tfs=GiASCjIwMjctMDYtMDIoAWoFEgNUTFZyBRIDTlVFkAGsAhogEgoyMDI3LTA2LTA4KAFqBRIDTlVFcgUSA1RMVpABrAJCAQFIAZgBAQ==&hl=en-US&curr=ILS" target="_blank" rel="noopener">Book</a></td>
+      </tr>
+    
+      <tr class="">
+        <td class="price" data-v="2466">2,466 &#8362;</td>
+        <td>El Al, Air France</td>
+        <td>TLV&rarr;CDG&rarr;NUE
+          </td>
+        <td>06-01 &rarr; 06-08</td>
+        <td>12:10 PM</td>
+        <td>10:15 PM</td>
+        <td data-v="290">4 hr 50 min CDG</td>
+        <td data-v="665">11 hr 5 min</td>
+        <td><div class="bags">
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/><path d="M9 14h6"/></svg>
+            <span class="tip"><b>Backpack / personal item</b>Personal item / small backpack is included in every economy fare on this route.
+               <i>(policy, not live-quoted)</i></span>
+          </span>
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="13" rx="2"/><path d="M9 8V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><path d="M12 3v1"/><path d="M9 21v1"/><path d="M15 21v1"/></svg>
+            <span class="tip"><b>Cabin trolley</b>Included. Cheapest fare with this bag: 2,466 NIS - same as the headline fare.
+              </span>
+          </span>
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3"/><path d="M3 12h18"/></svg>
+            <span class="tip"><b>Checked bag</b>Included. Cheapest fare with this bag: 2,466 NIS - same as the headline fare.
+              </span>
+          </span>
+          
+        </div></td>
+        <td><a href="https://www.google.com/travel/flights/search?tfs=GiASCjIwMjctMDYtMDEoAWoFEgNUTFZyBRIDTlVFkAGsAhogEgoyMDI3LTA2LTA4KAFqBRIDTlVFcgUSA1RMVpABrAJCAQFIAZgBAQ==&hl=en-US&curr=ILS" target="_blank" rel="noopener">Book</a></td>
+      </tr>
+    
+      <tr class="">
+        <td class="price" data-v="2466">2,466 &#8362;</td>
+        <td>El Al, Air France</td>
+        <td>TLV&rarr;CDG&rarr;NUE
+          </td>
+        <td>06-02 &rarr; 06-08</td>
+        <td>12:10 PM</td>
+        <td>10:15 PM</td>
+        <td data-v="290">4 hr 50 min CDG</td>
+        <td data-v="665">11 hr 5 min</td>
+        <td><div class="bags">
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/><path d="M9 14h6"/></svg>
+            <span class="tip"><b>Backpack / personal item</b>Personal item / small backpack is included in every economy fare on this route.
+               <i>(policy, not live-quoted)</i></span>
+          </span>
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="13" rx="2"/><path d="M9 8V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><path d="M12 3v1"/><path d="M9 21v1"/><path d="M15 21v1"/></svg>
+            <span class="tip"><b>Cabin trolley</b>Included. Cheapest fare with this bag: 2,466 NIS - same as the headline fare.
+              </span>
+          </span>
+          
+          <span class="bag no" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3"/><path d="M3 12h18"/></svg>
+            <span class="tip"><b>Checked bag</b>Google returned no fare including this bag for this itinerary.
+              </span>
+          </span>
+          
+        </div></td>
+        <td><a href="https://www.google.com/travel/flights/search?tfs=GiASCjIwMjctMDYtMDIoAWoFEgNUTFZyBRIDTlVFkAGsAhogEgoyMDI3LTA2LTA4KAFqBRIDTlVFcgUSA1RMVpABrAJCAQFIAZgBAQ==&hl=en-US&curr=ILS" target="_blank" rel="noopener">Book</a></td>
+      </tr>
+    
+      <tr class="">
+        <td class="price" data-v="2576">2,576 &#8362;</td>
+        <td>Lufthansa</td>
+        <td>TLV&rarr;FRA&rarr;NUE
+          </td>
+        <td>06-01 &rarr; 06-08</td>
+        <td>4:45 AM</td>
+        <td>10:45 AM</td>
+        <td data-v="95">1 hr 35 min FRA</td>
+        <td data-v="420">7 hr</td>
+        <td><div class="bags">
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/><path d="M9 14h6"/></svg>
+            <span class="tip"><b>Backpack / personal item</b>Personal item / small backpack is included in every economy fare on this route.
+               <i>(policy, not live-quoted)</i></span>
+          </span>
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="13" rx="2"/><path d="M9 8V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><path d="M12 3v1"/><path d="M9 21v1"/><path d="M15 21v1"/></svg>
+            <span class="tip"><b>Cabin trolley</b>Included. Cheapest fare with this bag: 2,576 NIS - same as the headline fare.
+              </span>
+          </span>
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3"/><path d="M3 12h18"/></svg>
+            <span class="tip"><b>Checked bag</b>Included. Cheapest fare with this bag: 2,576 NIS - same as the headline fare.
+              </span>
+          </span>
+          
+        </div></td>
+        <td><a href="https://www.google.com/travel/flights/search?tfs=GiASCjIwMjctMDYtMDEoAWoFEgNUTFZyBRIDTlVFkAGsAhogEgoyMDI3LTA2LTA4KAFqBRIDTlVFcgUSA1RMVpABrAJCAQFIAZgBAQ==&hl=en-US&curr=ILS" target="_blank" rel="noopener">Book</a></td>
+      </tr>
+    
+      <tr class="">
+        <td class="price" data-v="2647">2,647 &#8362;</td>
+        <td>Lufthansa</td>
+        <td>TLV&rarr;FRA&rarr;NUE
+          </td>
+        <td>06-01 &rarr; 06-07</td>
+        <td>4:45 AM</td>
+        <td>10:45 AM</td>
+        <td data-v="95">1 hr 35 min FRA</td>
+        <td data-v="420">7 hr</td>
+        <td><div class="bags">
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/><path d="M9 14h6"/></svg>
+            <span class="tip"><b>Backpack / personal item</b>Personal item / small backpack is included in every economy fare on this route.
+               <i>(policy, not live-quoted)</i></span>
+          </span>
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="13" rx="2"/><path d="M9 8V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><path d="M12 3v1"/><path d="M9 21v1"/><path d="M15 21v1"/></svg>
+            <span class="tip"><b>Cabin trolley</b>Included. Cheapest fare with this bag: 2,647 NIS - same as the headline fare.
+              </span>
+          </span>
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3"/><path d="M3 12h18"/></svg>
+            <span class="tip"><b>Checked bag</b>Included. Cheapest fare with this bag: 2,647 NIS - same as the headline fare.
+              </span>
+          </span>
+          
+        </div></td>
+        <td><a href="https://www.google.com/travel/flights/search?tfs=GiASCjIwMjctMDYtMDEoAWoFEgNUTFZyBRIDTlVFkAGsAhogEgoyMDI3LTA2LTA3KAFqBRIDTlVFcgUSA1RMVpABrAJCAQFIAZgBAQ==&hl=en-US&curr=ILS" target="_blank" rel="noopener">Book</a></td>
+      </tr>
+    
+      <tr class="">
+        <td class="price" data-v="2647">2,647 &#8362;</td>
+        <td>Lufthansa</td>
+        <td>TLV&rarr;FRA&rarr;NUE
+          </td>
+        <td>06-01 &rarr; 06-07</td>
+        <td>8:00 AM</td>
+        <td>2:05 PM</td>
+        <td data-v="100">1 hr 40 min FRA</td>
+        <td data-v="425">7 hr 5 min</td>
+        <td><div class="bags">
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/><path d="M9 14h6"/></svg>
+            <span class="tip"><b>Backpack / personal item</b>Personal item / small backpack is included in every economy fare on this route.
+               <i>(policy, not live-quoted)</i></span>
+          </span>
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="13" rx="2"/><path d="M9 8V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><path d="M12 3v1"/><path d="M9 21v1"/><path d="M15 21v1"/></svg>
+            <span class="tip"><b>Cabin trolley</b>Included. Cheapest fare with this bag: 2,647 NIS - same as the headline fare.
+              </span>
+          </span>
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3"/><path d="M3 12h18"/></svg>
+            <span class="tip"><b>Checked bag</b>Included. Cheapest fare with this bag: 2,647 NIS - same as the headline fare.
+              </span>
+          </span>
+          
+        </div></td>
+        <td><a href="https://www.google.com/travel/flights/search?tfs=GiASCjIwMjctMDYtMDEoAWoFEgNUTFZyBRIDTlVFkAGsAhogEgoyMDI3LTA2LTA3KAFqBRIDTlVFcgUSA1RMVpABrAJCAQFIAZgBAQ==&hl=en-US&curr=ILS" target="_blank" rel="noopener">Book</a></td>
+      </tr>
+    
+      <tr class="">
+        <td class="price" data-v="2647">2,647 &#8362;</td>
+        <td>Lufthansa</td>
+        <td>TLV&rarr;FRA&rarr;NUE
+          </td>
+        <td>06-01 &rarr; 06-08</td>
+        <td>8:00 AM</td>
+        <td>2:05 PM</td>
+        <td data-v="100">1 hr 40 min FRA</td>
+        <td data-v="425">7 hr 5 min</td>
+        <td><div class="bags">
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/><path d="M9 14h6"/></svg>
+            <span class="tip"><b>Backpack / personal item</b>Personal item / small backpack is included in every economy fare on this route.
+               <i>(policy, not live-quoted)</i></span>
+          </span>
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="13" rx="2"/><path d="M9 8V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><path d="M12 3v1"/><path d="M9 21v1"/><path d="M15 21v1"/></svg>
+            <span class="tip"><b>Cabin trolley</b>Included. Cheapest fare with this bag: 2,647 NIS - same as the headline fare.
+              </span>
+          </span>
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3"/><path d="M3 12h18"/></svg>
+            <span class="tip"><b>Checked bag</b>Included. Cheapest fare with this bag: 2,647 NIS - same as the headline fare.
+              </span>
+          </span>
+          
+        </div></td>
+        <td><a href="https://www.google.com/travel/flights/search?tfs=GiASCjIwMjctMDYtMDEoAWoFEgNUTFZyBRIDTlVFkAGsAhogEgoyMDI3LTA2LTA4KAFqBRIDTlVFcgUSA1RMVpABrAJCAQFIAZgBAQ==&hl=en-US&curr=ILS" target="_blank" rel="noopener">Book</a></td>
+      </tr>
+    
+      <tr class="">
+        <td class="price" data-v="2647">2,647 &#8362;</td>
+        <td>Lufthansa</td>
+        <td>TLV&rarr;FRA&rarr;NUE
+          </td>
+        <td>06-02 &rarr; 06-07</td>
+        <td>8:00 AM</td>
+        <td>2:05 PM</td>
+        <td data-v="100">1 hr 40 min FRA</td>
+        <td data-v="425">7 hr 5 min</td>
+        <td><div class="bags">
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/><path d="M9 14h6"/></svg>
+            <span class="tip"><b>Backpack / personal item</b>Personal item / small backpack is included in every economy fare on this route.
+               <i>(policy, not live-quoted)</i></span>
+          </span>
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="13" rx="2"/><path d="M9 8V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><path d="M12 3v1"/><path d="M9 21v1"/><path d="M15 21v1"/></svg>
+            <span class="tip"><b>Cabin trolley</b>Included. Cheapest fare with this bag: 2,647 NIS - same as the headline fare.
+              </span>
+          </span>
+          
+          <span class="bag no" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3"/><path d="M3 12h18"/></svg>
+            <span class="tip"><b>Checked bag</b>Not in the headline fare. Cheapest fare including it: 2,670 NIS (+23 NIS).
+              </span>
+          </span>
+          
+        </div></td>
+        <td><a href="https://www.google.com/travel/flights/search?tfs=GiASCjIwMjctMDYtMDIoAWoFEgNUTFZyBRIDTlVFkAGsAhogEgoyMDI3LTA2LTA3KAFqBRIDTlVFcgUSA1RMVpABrAJCAQFIAZgBAQ==&hl=en-US&curr=ILS" target="_blank" rel="noopener">Book</a></td>
+      </tr>
+    
+      <tr class="">
+        <td class="price" data-v="2647">2,647 &#8362;</td>
+        <td>Lufthansa</td>
+        <td>TLV&rarr;FRA&rarr;NUE
+          </td>
+        <td>06-02 &rarr; 06-08</td>
+        <td>8:00 AM</td>
+        <td>2:05 PM</td>
+        <td data-v="100">1 hr 40 min FRA</td>
+        <td data-v="425">7 hr 5 min</td>
+        <td><div class="bags">
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/><path d="M9 14h6"/></svg>
+            <span class="tip"><b>Backpack / personal item</b>Personal item / small backpack is included in every economy fare on this route.
+               <i>(policy, not live-quoted)</i></span>
+          </span>
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="13" rx="2"/><path d="M9 8V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><path d="M12 3v1"/><path d="M9 21v1"/><path d="M15 21v1"/></svg>
+            <span class="tip"><b>Cabin trolley</b>Included. Cheapest fare with this bag: 2,647 NIS - same as the headline fare.
+              </span>
+          </span>
+          
+          <span class="bag no" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3"/><path d="M3 12h18"/></svg>
+            <span class="tip"><b>Checked bag</b>Not in the headline fare. Cheapest fare including it: 2,669 NIS (+22 NIS).
+              </span>
+          </span>
+          
+        </div></td>
+        <td><a href="https://www.google.com/travel/flights/search?tfs=GiASCjIwMjctMDYtMDIoAWoFEgNUTFZyBRIDTlVFkAGsAhogEgoyMDI3LTA2LTA4KAFqBRIDTlVFcgUSA1RMVpABrAJCAQFIAZgBAQ==&hl=en-US&curr=ILS" target="_blank" rel="noopener">Book</a></td>
+      </tr>
+    
+      <tr class="">
+        <td class="price" data-v="2680">2,680 &#8362;</td>
+        <td>El Al, Air France</td>
+        <td>TLV&rarr;CDG&rarr;NUE
+          </td>
+        <td>06-01 &rarr; 06-08</td>
+        <td>10:00 AM</td>
+        <td>5:55 PM</td>
+        <td data-v="160">2 hr 40 min CDG</td>
+        <td data-v="535">8 hr 55 min</td>
+        <td><div class="bags">
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/><path d="M9 14h6"/></svg>
+            <span class="tip"><b>Backpack / personal item</b>Personal item / small backpack is included in every economy fare on this route.
+               <i>(policy, not live-quoted)</i></span>
+          </span>
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="13" rx="2"/><path d="M9 8V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><path d="M12 3v1"/><path d="M9 21v1"/><path d="M15 21v1"/></svg>
+            <span class="tip"><b>Cabin trolley</b>Included. Cheapest fare with this bag: 2,680 NIS - same as the headline fare.
+              </span>
+          </span>
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3"/><path d="M3 12h18"/></svg>
+            <span class="tip"><b>Checked bag</b>Included. Cheapest fare with this bag: 2,680 NIS - same as the headline fare.
+              </span>
+          </span>
+          
+        </div></td>
+        <td><a href="https://www.google.com/travel/flights/search?tfs=GiASCjIwMjctMDYtMDEoAWoFEgNUTFZyBRIDTlVFkAGsAhogEgoyMDI3LTA2LTA4KAFqBRIDTlVFcgUSA1RMVpABrAJCAQFIAZgBAQ==&hl=en-US&curr=ILS" target="_blank" rel="noopener">Book</a></td>
+      </tr>
+    
+      <tr class="">
+        <td class="price" data-v="2680">2,680 &#8362;</td>
+        <td>El Al, Air France</td>
+        <td>TLV&rarr;CDG&rarr;NUE
+          </td>
+        <td>06-02 &rarr; 06-08</td>
+        <td>10:00 AM</td>
+        <td>5:55 PM</td>
+        <td data-v="160">2 hr 40 min CDG</td>
+        <td data-v="535">8 hr 55 min</td>
+        <td><div class="bags">
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/><path d="M9 14h6"/></svg>
+            <span class="tip"><b>Backpack / personal item</b>Personal item / small backpack is included in every economy fare on this route.
+               <i>(policy, not live-quoted)</i></span>
+          </span>
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="13" rx="2"/><path d="M9 8V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><path d="M12 3v1"/><path d="M9 21v1"/><path d="M15 21v1"/></svg>
+            <span class="tip"><b>Cabin trolley</b>Included. Cheapest fare with this bag: 2,680 NIS - same as the headline fare.
+              </span>
+          </span>
+          
+          <span class="bag no" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3"/><path d="M3 12h18"/></svg>
+            <span class="tip"><b>Checked bag</b>Google returned no fare including this bag for this itinerary.
+              </span>
+          </span>
+          
+        </div></td>
+        <td><a href="https://www.google.com/travel/flights/search?tfs=GiASCjIwMjctMDYtMDIoAWoFEgNUTFZyBRIDTlVFkAGsAhogEgoyMDI3LTA2LTA4KAFqBRIDTlVFcgUSA1RMVpABrAJCAQFIAZgBAQ==&hl=en-US&curr=ILS" target="_blank" rel="noopener">Book</a></td>
+      </tr>
+    
+      <tr class="">
+        <td class="price" data-v="2680">2,680 &#8362;</td>
+        <td>El Al, Air France</td>
+        <td>TLV&rarr;CDG&rarr;NUE
+          </td>
+        <td>06-01 &rarr; 06-07</td>
+        <td>12:10 PM</td>
+        <td>10:15 PM</td>
+        <td data-v="290">4 hr 50 min CDG</td>
+        <td data-v="665">11 hr 5 min</td>
+        <td><div class="bags">
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/><path d="M9 14h6"/></svg>
+            <span class="tip"><b>Backpack / personal item</b>Personal item / small backpack is included in every economy fare on this route.
+               <i>(policy, not live-quoted)</i></span>
+          </span>
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="13" rx="2"/><path d="M9 8V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><path d="M12 3v1"/><path d="M9 21v1"/><path d="M15 21v1"/></svg>
+            <span class="tip"><b>Cabin trolley</b>Included. Cheapest fare with this bag: 2,680 NIS - same as the headline fare.
+              </span>
+          </span>
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3"/><path d="M3 12h18"/></svg>
+            <span class="tip"><b>Checked bag</b>Included. Cheapest fare with this bag: 2,680 NIS - same as the headline fare.
+              </span>
+          </span>
+          
+        </div></td>
+        <td><a href="https://www.google.com/travel/flights/search?tfs=GiASCjIwMjctMDYtMDEoAWoFEgNUTFZyBRIDTlVFkAGsAhogEgoyMDI3LTA2LTA3KAFqBRIDTlVFcgUSA1RMVpABrAJCAQFIAZgBAQ==&hl=en-US&curr=ILS" target="_blank" rel="noopener">Book</a></td>
+      </tr>
+    
+      <tr class="">
+        <td class="price" data-v="2897">2,897 &#8362;</td>
+        <td>El Al, Air France</td>
+        <td>TLV&rarr;CDG&rarr;NUE
+          </td>
+        <td>06-01 &rarr; 06-07</td>
+        <td>10:00 AM</td>
+        <td>5:55 PM</td>
+        <td data-v="160">2 hr 40 min CDG</td>
+        <td data-v="535">8 hr 55 min</td>
+        <td><div class="bags">
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/><path d="M9 14h6"/></svg>
+            <span class="tip"><b>Backpack / personal item</b>Personal item / small backpack is included in every economy fare on this route.
+               <i>(policy, not live-quoted)</i></span>
+          </span>
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="13" rx="2"/><path d="M9 8V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><path d="M12 3v1"/><path d="M9 21v1"/><path d="M15 21v1"/></svg>
+            <span class="tip"><b>Cabin trolley</b>Included. Cheapest fare with this bag: 2,897 NIS - same as the headline fare.
+              </span>
+          </span>
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3"/><path d="M3 12h18"/></svg>
+            <span class="tip"><b>Checked bag</b>Included. Cheapest fare with this bag: 2,897 NIS - same as the headline fare.
+              </span>
+          </span>
+          
+        </div></td>
+        <td><a href="https://www.google.com/travel/flights/search?tfs=GiASCjIwMjctMDYtMDEoAWoFEgNUTFZyBRIDTlVFkAGsAhogEgoyMDI3LTA2LTA3KAFqBRIDTlVFcgUSA1RMVpABrAJCAQFIAZgBAQ==&hl=en-US&curr=ILS" target="_blank" rel="noopener">Book</a></td>
+      </tr>
+    
+      <tr class="">
+        <td class="price" data-v="5129">5,129 &#8362;</td>
+        <td>KLM</td>
+        <td>TLV&rarr;AMS&rarr;NUE
+          </td>
+        <td>06-01 &rarr; 06-08</td>
+        <td>4:45 AM</td>
+        <td>1:40 PM</td>
+        <td data-v="225">3 hr 45 min AMS</td>
+        <td data-v="595">9 hr 55 min</td>
+        <td><div class="bags">
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/><path d="M9 14h6"/></svg>
+            <span class="tip"><b>Backpack / personal item</b>Personal item / small backpack is included in every economy fare on this route.
+               <i>(policy, not live-quoted)</i></span>
+          </span>
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="13" rx="2"/><path d="M9 8V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><path d="M12 3v1"/><path d="M9 21v1"/><path d="M15 21v1"/></svg>
+            <span class="tip"><b>Cabin trolley</b>Included. Cheapest fare with this bag: 5,129 NIS - same as the headline fare.
+              </span>
+          </span>
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3"/><path d="M3 12h18"/></svg>
+            <span class="tip"><b>Checked bag</b>Included. Cheapest fare with this bag: 5,129 NIS - same as the headline fare.
+              </span>
+          </span>
+          
+        </div></td>
+        <td><a href="https://www.google.com/travel/flights/search?tfs=GiASCjIwMjctMDYtMDEoAWoFEgNUTFZyBRIDTlVFkAGsAhogEgoyMDI3LTA2LTA4KAFqBRIDTlVFcgUSA1RMVpABrAJCAQFIAZgBAQ==&hl=en-US&curr=ILS" target="_blank" rel="noopener">Book</a></td>
+      </tr>
+    
+      <tr class="">
+        <td class="price" data-v="5129">5,129 &#8362;</td>
+        <td>KLM</td>
+        <td>TLV&rarr;AMS&rarr;NUE
+          </td>
+        <td>06-02 &rarr; 06-08</td>
+        <td>4:45 AM</td>
+        <td>1:40 PM</td>
+        <td data-v="225">3 hr 45 min AMS</td>
+        <td data-v="595">9 hr 55 min</td>
+        <td><div class="bags">
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/><path d="M9 14h6"/></svg>
+            <span class="tip"><b>Backpack / personal item</b>Personal item / small backpack is included in every economy fare on this route.
+               <i>(policy, not live-quoted)</i></span>
+          </span>
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="13" rx="2"/><path d="M9 8V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><path d="M12 3v1"/><path d="M9 21v1"/><path d="M15 21v1"/></svg>
+            <span class="tip"><b>Cabin trolley</b>Included. Cheapest fare with this bag: 5,129 NIS - same as the headline fare.
+              </span>
+          </span>
+          
+          <span class="bag no" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3"/><path d="M3 12h18"/></svg>
+            <span class="tip"><b>Checked bag</b>Google returned no fare including this bag for this itinerary.
+              </span>
+          </span>
+          
+        </div></td>
+        <td><a href="https://www.google.com/travel/flights/search?tfs=GiASCjIwMjctMDYtMDIoAWoFEgNUTFZyBRIDTlVFkAGsAhogEgoyMDI3LTA2LTA4KAFqBRIDTlVFcgUSA1RMVpABrAJCAQFIAZgBAQ==&hl=en-US&curr=ILS" target="_blank" rel="noopener">Book</a></td>
+      </tr>
+    
+      <tr class="">
+        <td class="price" data-v="5415">5,415 &#8362;</td>
+        <td>KLM</td>
+        <td>TLV&rarr;AMS&rarr;NUE
+          </td>
+        <td>06-01 &rarr; 06-07</td>
+        <td>4:45 AM</td>
+        <td>1:40 PM</td>
+        <td data-v="225">3 hr 45 min AMS</td>
+        <td data-v="595">9 hr 55 min</td>
+        <td><div class="bags">
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/><path d="M9 14h6"/></svg>
+            <span class="tip"><b>Backpack / personal item</b>Personal item / small backpack is included in every economy fare on this route.
+               <i>(policy, not live-quoted)</i></span>
+          </span>
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="13" rx="2"/><path d="M9 8V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><path d="M12 3v1"/><path d="M9 21v1"/><path d="M15 21v1"/></svg>
+            <span class="tip"><b>Cabin trolley</b>Included. Cheapest fare with this bag: 5,415 NIS - same as the headline fare.
+              </span>
+          </span>
+          
+          <span class="bag yes" tabindex="0">
+            <svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3"/><path d="M3 12h18"/></svg>
+            <span class="tip"><b>Checked bag</b>Included. Cheapest fare with this bag: 5,415 NIS - same as the headline fare.
+              </span>
+          </span>
+          
+        </div></td>
+        <td><a href="https://www.google.com/travel/flights/search?tfs=GiASCjIwMjctMDYtMDEoAWoFEgNUTFZyBRIDTlVFkAGsAhogEgoyMDI3LTA2LTA3KAFqBRIDTlVFcgUSA1RMVpABrAJCAQFIAZgBAQ==&hl=en-US&curr=ILS" target="_blank" rel="noopener">Book</a></td>
+      </tr>
+    
+    </tbody>
+  </table>
+  
+  </div>
+
+  <p class="note">
+    Updated 2026-09-21 15:35 UTC &middot; source: Google Flights &middot; prices are round-trip
+    totals for 1 adult in ILS.<br>
+    Baggage: hover an icon for the cheapest fare that includes that bag. Google
+    re-prices to a different fare brand when a bag is requested, so these are real
+    fare totals, not add-on fees.
+    <br>Filtered out this scan:
+      8 has bus/train leg.
+  </p>
+</div>
+<script>
+document.querySelectorAll('th[data-sort]').forEach(function(th,i){
+  th.addEventListener('click',function(){
+    var tb=th.closest('table').tBodies[0], idx=[].indexOf.call(th.parentNode.children,th);
+    var dir=th.dataset.dir==='a'?-1:1; th.dataset.dir=dir===1?'a':'d';
+    [].slice.call(tb.rows).sort(function(x,y){
+      var a=+x.cells[idx].dataset.v, b=+y.cells[idx].dataset.v; return (a-b)*dir;
+    }).forEach(function(r){tb.appendChild(r)});
+  });
+});
+</script>
+</body>
+</html>

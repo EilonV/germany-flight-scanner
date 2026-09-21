@@ -1,0 +1,24 @@
+# --- secrets: the only genuinely sensitive file ---
+.env
+.env.*
+!.env.example
+
+# --- python ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# --- scanner scratch output ---
+index.preview.html
+data/*.backup.json
+*.log
+
+# --- editors / OS ---
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
