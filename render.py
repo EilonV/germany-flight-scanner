@@ -36,10 +36,12 @@ TEMPLATE = Template(
   :root{
     --bg:#f6f7f9; --card:#fff; --ink:#15181d; --muted:#666e7a; --line:#e3e6ea;
     --accent:#1a6cff; --good:#0a7d4a; --good-bg:#e6f6ee; --warn:#8a6100; --off:#c3c8cf;
+    --stamp:#c2410c;
   }
   @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
     --bg:#101317; --card:#181c22; --ink:#e8eaed; --muted:#9aa3ad; --line:#2a2f37;
     --accent:#63a0ff; --good:#4ade9a; --good-bg:#12291f; --warn:#e0b44a; --off:#4a515b;
+    --stamp:#fb923c;
   }}
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);padding-block:28px;padding-left:16px;padding-right:16px;
@@ -47,6 +49,7 @@ TEMPLATE = Template(
   .wrap{max-width:1080px;margin:0 auto}
   h1{font-size:22px;margin:0 0 4px}
   .sub{color:var(--muted);font-size:13px;margin-bottom:18px}
+  .stamp{color:var(--stamp);font-size:13px;font-weight:600;margin:0 0 10px}
   .bar{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}
   .stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;flex:1;min-width:140px}
   .stat b{display:block;font-size:20px}
@@ -88,6 +91,7 @@ TEMPLATE = Template(
 <body>
 <div class="wrap">
   <h1>{{ origin }} &rarr; {{ destination }} &middot; June 2027</h1>
+  <div class="stamp">Last scan: {{ updated }}</div>
   <div class="sub">
     Round trip, 1 adult, economy &middot; outbound {{ outbound_dates|join(" or ") }},
     return {{ return_dates|join(" or ") }}<br>
@@ -161,7 +165,7 @@ TEMPLATE = Template(
   </div>
 
   <p class="note">
-    Updated {{ updated }} &middot; source: Google Flights &middot; prices are round-trip
+    Source: Google Flights &middot; prices are round-trip
     totals for 1 adult in {{ currency }}.<br>
     Baggage: hover an icon for the cheapest fare that includes that bag. Google
     re-prices to a different fare brand when a bag is requested, so these are real
